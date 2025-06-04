@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'testsapp',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'diplom.urls'
+
+LOGIN_REDIRECT_URL = 'cabinet'  # Меняем с '/tests/' на 'cabinet'
 
 TEMPLATES = [
     {
@@ -116,3 +119,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Установите кастомную модель пользователя:
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# Добавьте в конец файла:
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'testsapp:cabinet'
+LOGOUT_REDIRECT_URL = 'users:login'

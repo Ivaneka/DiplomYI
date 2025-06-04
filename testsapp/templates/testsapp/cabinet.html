@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Личный кабинет</h1>
+
+    <!-- Статистика по тестам -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2>Статистика по тестам</h2>
+        </div>
+        <div class="card-body">
+            {% if test_stats %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Тест</th>
+                        <th>Попытки</th>
+                        <th>Лучший результат</th>
+                        <th>Последняя попытка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in test_stats %}
+                    <tr>
+                        <td>{{ stat.test.title }}</td>
+                        <td>{{ stat.attempts }}</td>
+                        <td>{{ stat.best_score }}</td>
+                        <td>
+                            {% if stat.last_attempt %}
+                                {{ stat.last_attempt|date:"d.m.Y H:i" }}
+                            {% else %}
+                                Нет данных
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>У вас пока нет результатов тестов.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Доступные материалы -->
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h2>Доступные материалы</h2>
+        </div>
+        <div class="card-body">
+            {% if materials %}
+            <ul class="list-group">
+                {% for material in materials %}
+                <li class="list-group-item">
+                    <a href="{% url 'testsapp:material_detail' material.id %}">
+                        {{ material.title }}
+                        {% if material.related_test %}
+                            (для теста: {{ material.related_test.title }})
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>У вас пока нет доступных материалов.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
