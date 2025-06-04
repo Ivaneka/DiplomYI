@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{{ material.title }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="material-content">
+                {{ material.content|linebreaks }}
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'testsapp:cabinet' %}" class="btn btn-secondary mt-3">Вернуться в кабинет</a>
+</div>
+{% endblock %}
