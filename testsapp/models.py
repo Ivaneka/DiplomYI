@@ -60,3 +60,41 @@ class TestResult(models.Model):
             f"Пользователь: {self.user.username} | "
             f"Тест: {self.test.title}"
         )
+
+
+class TestCategory(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(blank=True, verbose_name="Описание")
+
+    def __str__(self):
+        return self.name
+
+
+class Test(models.Model):
+    id = models.AutoField(primary_key=True, editable=False, verbose_name="ID")
+    title = models.CharField(max_length=200, verbose_name="Название теста")
+    description = models.TextField(verbose_name="Описание")
+
+    # ▼▼▼ ВСТАВЬТЕ ЗДЕСЬ ▼▼▼
+    category = models.ForeignKey(
+        TestCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Категория"
+    )
+    # ▲▲▲ ЭТОТ БЛОК ▲▲▲
+
+    assigned_to = models.ManyToManyField(User, verbose_name="Для пользователей")
+
+    def __str__(self):
+        return f"{self.title} (ID: {self.id})"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    department = models.CharField(max_length=100, blank=True, verbose_name="Отдел")
+    position = models.CharField(max_length=100, blank=True, verbose_name="Должность")
+
+    def __str__(self):
+        return f"Профиль {self.user.username}"
+
