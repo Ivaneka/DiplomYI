@@ -25,11 +25,6 @@ services:
     image: caddy:2.10
     volumes:
       - ./reverse-proxy/Caddyfile:/etc/caddy/Caddyfile:ro
-    develop:
-      watch:
-        - action: restart
-          path: ./reverse-proxy/Caddyfile
-          target: /etc/caddy/
     ports:
       - 80:80
 
