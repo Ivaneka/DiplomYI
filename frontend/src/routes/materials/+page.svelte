@@ -16,7 +16,7 @@
 </script>
 
 <aside
-	class="resize:horizontal border-r-double border-surface-50-950 fixed top-0 left-0 z-10 z-40 flex
+	class="resize:horizontal border-r-double border-surface-50-950 fixed top-0 left-0 z-10 z-40 flex mt-20
 	h-screen w-40 -translate-x-full translate-x-0 flex-col overflow-x-hidden overflow-y-scroll text-wrap lg:w-64"
 >
 	{#if materials !== null}
@@ -34,7 +34,7 @@
 		{/each}
 	{/if}
 </aside>
-<div class="ml-40 h-screen p-4 pb-0 lg:ml-64">
+<div class="ml-40 p-4 pb-0 lg:ml-64">
 	{#if currentMaterial !== null}
 		{#key currentMaterial.id}
 			<Material title={currentMaterial.title} content={currentMaterial.content} />{/key}

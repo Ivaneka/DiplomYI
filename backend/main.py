@@ -229,7 +229,7 @@ class ORMUser(BaseModel):
 def get_tests(request: Request, username: str) -> list[ORMTest]:
     if request.state.user is None:
         raise HTTPException(401)
-    if not request.state.user.is_admin:
+    if not request.state.user.is_admin and request.state.user.username != username:
         raise HTTPException(403)
     with Session() as session:
         return session.query(orm.Test).join(
@@ -250,18 +250,19 @@ class ORMAttempt(BaseModel):
     attempt_answers: list[ORMAttemptAnswer]
 
 
-@app.get('/api/attempts')
-def get_tests(request: Request, username: str,
-              test_id: int) -> list[ORMAttempt]:
+@app.get('/api/attempt')
+def get_attempts(request: Request, username: str,
+                 test_id: int) -> list[ORMAttempt]:
     if request.state.user is None:
         raise HTTPException(401)
-    if not request.state.user.is_admin:
+    if not request.state.user.is_admin and request.state.user.username != username:
         raise HTTPException(403)
     with Session() as session:
-        return session.query(orm.TestAttempt).join(
+        return session.query(orm.TestAttempt).filter_by(test_id=test_id).join(
             orm.User, orm.TestAttempt.user_id == orm.User.id).options(
-                joinedload(orm.AttemptAnswer)).filter_by(
-                    username=username, test_id=test_id).all()
+                joinedload(orm.TestAttempt.attempt_answers).subqueryload(
+                    orm.AttemptAnswer.answer)).filter_by(
+                        username=username).all()
 
 
 @app.get('/api/me')
@@ -295,3 +296,46 @@ def add_attempt(request: Request, attempt_: AttemptRequest):
             if attempt_answer.answer.is_correct:
                 attempt.score += 1
                 session.commit()
+
+
+@app.get('/api/user')
+def get_users(request: Request):
+    if request.state.user is None:
+        raise HTTPException(401)
+    if not request.state.user.is_admin:
+        raise HTTPException(403)
+    with Session() as session:
+        res = session.query(orm.User.username).all()
+        return [username for username, in res]
+
+
+class AssignRequest(BaseModel):
+    username: str
+    test_id: int
+
+
+@app.post('/api/assign')
+def assign_test(request: Request, body: AssignRequest):
+    if request.state.user is None:
+        raise HTTPException(401)
+    if not request.state.user.is_admin:
+        raise HTTPException(403)
+    with Session() as session:
+        user = session.query(
+            orm.User).filter_by(username=body.username).first()
+        if user is None:
+            raise HTTPException(400)
+        assignment = orm.UserAssignedTest(user_id=user.id,
+                                          test_id=body.test_id)
+        session.add(assignment)
+        session.commit()
+
+
+@app.get('/api/test')
+def get_all_tests(request: Request):
+    if request.state.user is None:
+        raise HTTPException(401)
+    if not request.state.user.is_admin:
+        raise HTTPException(403)
+    with Session() as session:
+        return session.query(orm.Test).all()

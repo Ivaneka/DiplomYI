@@ -4,9 +4,11 @@
 	let { test }: { test: TestModel } = $props();
 </script>
 
-<div>
+<div class="flex flex-col w-full">
 	<input type="text" bind:value={test.title} placeholder="Название теста" />
-	<input type="text" bind:value={test.description} placeholder="Описание теста" />
+	<textarea bind:value={test.description} class="resize-none" placeholder="Описание теста"
+	></textarea>
+
 	<div>
 		{#each test.questions as question (crypto.randomUUID())}
 			<QuestionForm {question} />

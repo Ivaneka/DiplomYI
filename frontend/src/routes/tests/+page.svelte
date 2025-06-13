@@ -26,8 +26,8 @@
 </script>
 
 <aside
-	class="resize:horizontal border-r-double border-surface-50-950 fixed top-0 left-0 z-10 z-40 flex
-	h-screen w-40 -translate-x-full translate-x-0 flex-col overflow-x-hidden overflow-y-scroll text-wrap lg:w-64"
+	class="resize:horizontal border-r-double border-surface-50-950 fixed top-0 left-0 z-10 z-40 flex mt-20
+	h-full w-40 -translate-x-full translate-x-0 flex-col overflow-x-hidden overflow-y-scroll text-wrap lg:w-64"
 >
 	{#if tests !== null}
 		{#each tests as test (test.id)}
@@ -44,7 +44,7 @@
 		{/each}
 	{/if}
 </aside>
-<div class="ml-40 h-screen p-4 pb-0 lg:ml-64">
+<div class="ml-40 p-4 pb-0 lg:ml-64">
 	{#if currentTest !== null}
 		{#key currentTest.id}
 			<Test test={currentTest} />{/key}

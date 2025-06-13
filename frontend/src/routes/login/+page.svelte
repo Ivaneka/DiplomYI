@@ -14,8 +14,8 @@
 	<div id="tabs-container" class="h-48 w-96">
 		<Tabs value={selectedTab} onValueChange={(e) => (selectedTab = e.value)} fluid>
 			{#snippet list()}
-				<Tabs.Control value="login">Login</Tabs.Control>
-				<Tabs.Control value="signup">Sign up</Tabs.Control>
+				<Tabs.Control value="login">Войти</Tabs.Control>
+				<Tabs.Control value="signup">Создать аккаунт</Tabs.Control>
 			{/snippet}
 			{#snippet content()}
 				<Tabs.Panel value="login"><Login /></Tabs.Panel>

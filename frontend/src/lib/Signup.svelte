@@ -36,26 +36,26 @@
 		type="text"
 		id="username-input"
 		bind:value={username}
-		placeholder="username"
+		placeholder="логин"
 		class="border-surface-200-800 rounded-t-md border p-2"
 	/>
 	<input
 		type="password"
 		id="password-input"
 		bind:value={password}
-		placeholder="password"
+		placeholder="пароль"
 		class="border-surface-200-800 border p-2"
 	/>
 	<input
 		type="password"
 		id="password-confirmation-input"
 		bind:value={passwordConfirmation}
-		placeholder="password again"
+		placeholder="подтверждение пароля"
 		class="border-surface-200-800 rounded-b-md border p-2"
 	/>
 	<button
 		onclick={signup}
-		class="btn bg-primary-300-700 hover:bg-primary-400-600 mt-2 rounded-full p-2">Sign up</button
+		class="btn bg-primary-300-700 hover:bg-primary-400-600 mt-2 rounded-full p-2">Создать</button
 	>
 	<div class="text-error-500 p-4 text-center" class:invisible={error == null}>{error}</div>
 </div>

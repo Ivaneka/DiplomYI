@@ -18,10 +18,11 @@
 	}
 </script>
 
-<div class="flex flex-col">
-	<input bind:value={title} type="text" />
+<div class="flex flex-col h-full">
+	<input bind:value={title} type="text" placeholder="Название материала" />
 	<div class="flex flex-row flex-1 gap-1">
-		<textarea bind:value={content} class="flex-1 p-1"></textarea>
+		<textarea bind:value={content} class="flex-1 p-1 resize-none" placeholder="Текст материала"
+		></textarea>
 		<div class="flex-1 p-1">{@html marked(content)}</div>
 	</div>
 	<button onclick={createMaterial}>Создать</button>
