@@ -288,10 +288,6 @@ def add_attempt(request: Request, attempt_: AttemptRequest):
                                                answer_id=answer_id)
             session.add(attempt_answer)
             session.commit()
-            session.refresh(attempt_answer)
-            if attempt_answer.answer.is_correct:
-                attempt.score += 1
-                session.commit()
 
 
 @app.get('/api/user')
