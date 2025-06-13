@@ -2,16 +2,13 @@ services:
   backend:
     build: ./backend/
     environment:
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
     develop:
       watch:
         - action: sync+restart
           path: ./backend/
           target: /app/
-    secrets:
-      - postgres_user
-      - postgres_password
 
   frontend:
     build: ./frontend/
@@ -31,20 +28,11 @@ services:
   postgres:
     image: postgres:17.4
     environment:
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
       POSTGRES_DB: tests
-    secrets:
-      - postgres_user
-      - postgres_password
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-secrets:
-  postgres_user:
-    file: ./secrets/postgres_user
-  postgres_password:
-    file: ./secrets/postgres_password
 
 volumes:
   pgdata:

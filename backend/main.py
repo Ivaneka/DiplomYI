@@ -17,12 +17,8 @@ app = fastapi.FastAPI()
 
 
 def get_database_url():
-    user_file = os.getenv('POSTGRES_USER_FILE')
-    password_file = os.getenv('POSTGRES_PASSWORD_FILE')
-    with open(user_file) as file:
-        user = file.read().strip()
-    with open(password_file) as file:
-        password = file.read().strip()
+    user = os.getenv('POSTGRES_USER')
+    password = os.getenv('POSTGRES_PASSWORD')
     url = f'postgresql://{user}:{password}@postgres:5432/tests'
     return url
 
