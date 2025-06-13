@@ -1,0 +1,26 @@
+<script lang="ts">
+	import type { TestModelWithID } from '$lib/types';
+	import Question from './Question.svelte';
+	let { test }: { test: TestModelWithID } = $props();
+	let selectedAnswers: number[] = $state([]);
+	async function submit() {
+		const body = {
+			selectedAnswers: selectedAnswers,
+			test_id: test.id
+		};
+		const response = await fetch('/api/attempt', {
+			method: 'PUT',
+			body: JSON.stringify(body),
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+</script>
+
+<div>
+	<h1 class="h1">{test.title}</h1>
+	<div>{test.description}</div>
+	{#each test.questions as question (question.id)}
+		<Question {question} {selectedAnswers} />
+	{/each}
+	<button onclick={submit}>Отправить ответы</button>
+</div>

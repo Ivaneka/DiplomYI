@@ -7,7 +7,7 @@ import fastapi
 import sqlalchemy
 from fastapi import HTTPException, Response, Request
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, joinedload
 from pydantic import BaseModel
 
 from orm import Base
@@ -148,7 +148,7 @@ def create_material(request: Request, material: MaterialModel):
         raise HTTPException(403)
     orm_material = orm.Material(
         title=material.title,
-        content=material.title,
+        content=material.content,
     )
     with Session() as session:
         session.add(orm_material)
@@ -188,3 +188,110 @@ def create_test(request: Request, test: TestModel):
                 'material_id': material_id,
             })
         session.commit()
+
+
+class ORMAnswer(BaseModel):
+    id: int
+    is_correct: bool
+    text: str
+
+    class Config:
+        orm_mode = True
+
+
+class ORMQuestion(BaseModel):
+    text: str
+    answers: list[ORMAnswer]
+
+    class Config:
+        orm_mode = True
+
+
+class ORMTest(BaseModel):
+    id: int
+    title: str
+    description: str
+    questions: list[ORMQuestion]
+
+    class Config:
+        orm_mode = True
+
+
+class ORMUser(BaseModel):
+    username: str
+    assigned_tests: list[ORMTest]
+
+    class Config:
+        orm_mode = True
+
+
+@app.get('/api/tests/assigned')
+def get_tests(request: Request, username: str) -> list[ORMTest]:
+    if request.state.user is None:
+        raise HTTPException(401)
+    if not request.state.user.is_admin:
+        raise HTTPException(403)
+    with Session() as session:
+        return session.query(orm.Test).join(
+            orm.UserAssignedTest,
+            orm.UserAssignedTest.test_id == orm.Test.id).join(
+                orm.User,
+                orm.UserAssignedTest.user_id == orm.User.id).filter_by(
+                    username=username).options(
+                        joinedload(orm.Test.questions).subqueryload(
+                            orm.Question.answers)).all()
+
+
+class ORMAttemptAnswer(BaseModel):
+    answer: ORMAnswer
+
+
+class ORMAttempt(BaseModel):
+    attempt_answers: list[ORMAttemptAnswer]
+
+
+@app.get('/api/attempts')
+def get_tests(request: Request, username: str,
+              test_id: int) -> list[ORMAttempt]:
+    if request.state.user is None:
+        raise HTTPException(401)
+    if not request.state.user.is_admin:
+        raise HTTPException(403)
+    with Session() as session:
+        return session.query(orm.TestAttempt).join(
+            orm.User, orm.TestAttempt.user_id == orm.User.id).options(
+                joinedload(orm.AttemptAnswer)).filter_by(
+                    username=username, test_id=test_id).all()
+
+
+@app.get('/api/me')
+def get_me(request: Request):
+    if request.state.user is None:
+        return {'username': None}
+    return {'username': request.state.user.username}
+
+
+class AttemptRequest(BaseModel):
+    selectedAnswers: list[int]
+    test_id: int
+
+
+@app.put('/api/attempt')
+def add_attempt(request: Request, attempt_: AttemptRequest):
+    if request.state.user is None:
+        raise HTTPException(401)
+    with Session() as session:
+        attempt = orm.TestAttempt(user_id=request.state.user.id,
+                                  test_id=attempt_.test_id)
+        session.add(attempt)
+        session.commit()
+        session.refresh(attempt)
+        for answer_id in attempt_.selectedAnswers:
+            attempt_answer = orm.AttemptAnswer(attempt_id=attempt.id,
+                                               answer_id=answer_id)
+            session.add(attempt_answer)
+            session.commit()
+            session.refresh(attempt_answer)
+            if attempt_answer.answer.is_correct:
+                attempt.score += 1
+                session.commit()
