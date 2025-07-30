@@ -39,6 +39,7 @@
 		const request = await fetch('/api/attempt?' + params);
 		attempts = await request.json();
 	}
+	onMount(() => console.log(tests));
 </script>
 
 <div class="flex flex-row justify-center w-full p-4">
@@ -50,13 +51,13 @@
 		}}
 		class="flex-1"
 	>
-		{#each users as user (user)}
+		{#each users as user (crypto.randomUUID())}
 			<option value={user}>{user}</option>
 		{/each}
 	</select>
 
 	<select bind:value={selectedTestID} onchange={updateAttempts} class="flex-1">
-		{#each tests as test (test.id)}
+		{#each tests as test (crypto.randomUUID())}
 			<option value={test.id}>{test.title}</option>
 		{/each}
 	</select>
