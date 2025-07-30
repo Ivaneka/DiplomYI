@@ -23,7 +23,7 @@
 <div>
 	<h1 class="h1">{test.title}</h1>
 	<div>{test.description}</div>
-	{#each test.questions as question (question.id)}
+	{#each test.questions as question (crypto.randomUUID())}
 		<Question {question} {selectedAnswers} />
 	{/each}
 	<button onclick={submit}>Отправить ответы</button>
