@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TestModelWithID } from '$lib/types';
+	import { onMount } from 'svelte';
 	import Question from './Question.svelte';
 	let { test }: { test: TestModelWithID } = $props();
 	let selectedAnswers: number[] = $state([]);
@@ -14,6 +15,9 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 	}
+	onMount(() => {
+		console.log(test);
+	});
 </script>
 
 <div>
